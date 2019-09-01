@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>CMS App</h1>
+        <h1>CMS App </h1>
     </header>
     </div>
   );
