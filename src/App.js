@@ -4,9 +4,10 @@ import Template from './views/Layout/Template';
 import Login from './views/Login/Login';
 const routes=(
   <Switch>
-   <Route path="/" component={Login}/>
+   <Route exact path="/" component={Login}/>
    <Route path="/login" component={Login}/>
    <Route path="/welcome" component={Template}/>
+   <Redirect to="/login"/>
    </Switch>
 );
 export default class App extends React.Component {

@@ -31,7 +31,7 @@ export default class Login extends React.Component {
     }
   }
   validateLogin(){
-     return <Redirect to="/welcome"></Redirect>;
+     this.props.history.push('/welcome');
   }
   render() {
     return (
