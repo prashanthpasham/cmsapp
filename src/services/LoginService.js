@@ -1,7 +1,7 @@
 import React from 'react';
 
 const LoginService = {
-    isAuthenticated: false,
+    isAuthenticated: true,
     authenticate(loginJson) {
       this.isAuthenticated = true
      

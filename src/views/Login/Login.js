@@ -31,7 +31,7 @@ export default class Login extends React.Component {
     }
   }
   validateLogin(){
-     this.props.history.push('/welcome');
+     this.props.history.push('/dashboard');
   }
   render() {
     return (
@@ -62,10 +62,8 @@ export default class Login extends React.Component {
 
           </div>
         </header>
-        <Switch>
-   <Route path="/welcome" component={Template}/>
-   </Switch>
-   {this.props.children}
+       
+  
       </div>
     );
   }
