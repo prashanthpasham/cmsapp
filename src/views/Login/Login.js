@@ -3,12 +3,14 @@ import { Card } from 'primereact/card';
 import 'primereact/resources/themes/nova-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
 import './Login.css';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import Template from '../Layout/Template';
 import {Route,Switch,Redirect} from 'react-router-dom';
+import LoginService from '../../services/LoginService';
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -22,7 +24,7 @@ export default class Login extends React.Component {
   }
   async enableLogin(key,value) {
    await this.setState({[key]:value});
-    console.log(this.state);
+    //console.log(this.state);
     if (this.state.username == undefined || this.state.username.trim().length ==0
       || this.state.password == undefined || this.state.password.length ==0) {
       this.setState({ show: true });
@@ -31,6 +33,7 @@ export default class Login extends React.Component {
     }
   }
   validateLogin(){
+    LoginService.authenticate({'username':this.state.username,'password':this.state.password}).then(data=>alert(JSON.stringify(data)));
      this.props.history.push('/dashboard');
   }
   render() {
@@ -38,8 +41,8 @@ export default class Login extends React.Component {
       <div className="App">
         <header className="App-header">
           <div className="p-grid">
-            <div className="p-col-12 p-md-4 p-lg-3"></div>
-            <div className="p-col-12 p-md-8 p-lg-6">
+            
+            <div className="p-col-12 p-md-12 p-lg-12">
               <Card title="CMS Login" >
                 <span className="p-float-label">
                   <InputText id="in" value={this.state.username} onChange={(e) => this.enableLogin('username', e.target.value) } />
