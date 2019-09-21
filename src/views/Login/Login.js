@@ -10,14 +10,29 @@ import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import Template from '../Layout/Template';
 import {Route,Switch,Redirect} from 'react-router-dom';
-import LoginService from '../../services/LoginService';
+import LoginService from '../../services/LoginService'; 
+import OrganizationAccess from '../OrganizationAcess/OrganizationPortal';
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
+    var routeTable=[{
+      "name":"Portal Access",
+      "path":"/dashboard/access-portal",
+      "component":"OrganizationAccess"
+    },{
+      "name":"College Info",
+      "path":"/dashboard/management-info",
+      "component":"MangementInfo"
+    },{
+      "name":"Employee",
+      "path":"/dashboard/employee-list",
+      "component":"EmployeeList"
+    }];
     this.state = {
       username: "",
       password: "",
-      show: true
+      show: true,
+      routes:routeTable
     };
     this.enableLogin=this.enableLogin.bind(this);
     this.validateLogin=this.validateLogin.bind(this);
@@ -33,8 +48,22 @@ export default class Login extends React.Component {
     }
   }
   validateLogin(){
-    LoginService.authenticate({'username':this.state.username,'password':this.state.password}).then(data=>alert(JSON.stringify(data)));
-     this.props.history.push('/dashboard');
+    LoginService.authenticate({'username':this.state.username,'password':this.state.password}).then(data=>{
+      var res=JSON.stringify(data);
+      alert("res>>"+res);
+      if(Object.keys(res).length>0){
+        if(res.error!=undefined && (res.error ||   res.error.length>0)){
+            if(res.error==="Invalid Credentails"){
+              alert(res.error); 
+            }
+        }else{
+          localStorage.setItem("token",res.token);
+          this.props.history.push('/dashboard');
+        }
+      }
+    });
+     
+    
   }
   render() {
     return (

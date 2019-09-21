@@ -11,6 +11,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
       : <Redirect to='/login' />
   )} />
   );
+
 const routes=(
   <Switch>
    <Route exact path="/" component={Login}/>
@@ -19,7 +20,7 @@ const routes=(
    <PrivateRoute path="/dashboard" component={Template} >
     
      </PrivateRoute>
-     <Route path="/dashboard/accessportal" component={OrganizationAccess}/>
+    
    </Switch>
 );
 export default class App extends React.Component {

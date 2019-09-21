@@ -14,7 +14,7 @@ const LoginService = {
       //this.isAuthenticated = true
       alert("loginJson>"+loginJson);
     return axios({
-      url:server+"login/validate",
+      url:server+"login/authenticate",
       method:'post',
       data:JSON.stringify(loginJson),
        headers: {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*' }
