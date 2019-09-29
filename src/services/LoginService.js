@@ -18,7 +18,7 @@ const routeTable=[{
 const LoginService = {
     //isAuthenticated: true,
     isLoggedIn(){
-      if(localStorage.getItem("username")==undefined){
+      if(localStorage.getItem("username")===undefined){
         isAuthenticated=false;
       }else
       isAuthenticated=true;
@@ -73,14 +73,32 @@ const LoginService = {
           //alert(localStorage.getItem("token"));
           return this.getService("login/menus-user?username="+localStorage.getItem("username"),localStorage.getItem("token"))
           .then(data=>{
+            //alert(JSON.stringify(data));
+            var map = new Map();
+            routeTable.forEach(link=>{
+               map.set(link.name,link);
+            });
+            console.log(map);
             var finalMenus=[];
             data.links.forEach(element => {
-              var check=false;
-              var menu={};
-              if(check){
-                finalMenus.push(element);
-              }
+              var obj={};
+              obj.name=element.menutitle;
+              obj.menus=[];
+              var array=[];
+             element.menus.forEach(menu=>{
+               var menuItem=map.get(menu.menutitle);
+               if(menuItem!=undefined){
+               console.log("menuitem>>"+JSON.stringify(menuItem));
+               menu['component']=menuItem.component;
+               menu['path']=menuItem.path;
+               array.push(menu);
+               }
+             })
+              obj.menus=array;
+              finalMenus.push(obj);
             });
+            alert("finalMenus>>"+JSON.stringify(finalMenus));
+            return finalMenus;
           });
         }
       }

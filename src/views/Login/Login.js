@@ -49,10 +49,12 @@ export default class Login extends React.Component {
           localStorage.setItem("username",data.username);
           localStorage.setItem("token",data.token);
           //alert("lll>"+localStorage.getItem("token"));
-          LoginService.menusService().then(menu=>{
-            console.log("menus>>"+JSON.stringify(menu));
-          })
-          this.props.history.push('/dashboard');
+          LoginService.menusService().then(menus=>{
+            localStorage.setItem("menus",JSON.stringify(menus));
+           
+            this.props.history.push('/dashboard');
+          });
+         // 
         }
       }
     });

@@ -8,6 +8,15 @@ import 'primeflex/primeflex.css';
 const items=[{
   label:'CMS App',
   icon:''}];
+  const MenuItem = ({ link:match }) => (
+    // here's a nested div
+    <div>
+      {/* here's a nested Route,
+          match.url helps us make a relative path */}
+      <Route path={match.path} component={match.component} />
+    </div>
+  )
+  
 export default class Template extends React.Component {
   constructor(props) {
     super(props);
@@ -17,12 +26,15 @@ export default class Template extends React.Component {
     };
   }
   componentDidMount(){
-   
+    if(localStorage.getItem("menus")!=undefined)
+    this.setState({menus:JSON.parse(localStorage.getItem("menus"))});
+  
   }
   render() {
    
     return (
       <div>
+       
       <div className="p-grid">
         <div className="p-col-12 p-md-12 p-lg-12" >
         
@@ -36,15 +48,29 @@ export default class Template extends React.Component {
           <div className="p-grid">
           <div className="p-col-12 p-md-6 p-lg-3">
          <div id="layout-sidebar">
-           <br/>
-           
-            <Link to="/dashboard/accessportal" style={{padding:'15px'}}>Organization Portal</Link>
+          
+           { this.state.menus.map(menu=>{
+           // console.log("link>>"+JSON.stringify(menu))
+          menu.menus.map(link=>{
+         // console.log("LINK>>"+JSON.stringify(link))
+       return <Link to={link.path} style={{padding:'15px'}}>{link.menutitle}</Link>
+          })
+        })}
+
          </div>
           </div>
           <div className="p-col-12 p-md-6 p-lg-9">
       
           <Switch>
-        <Route path="/dashboard/accessportal" component={OrganizationAccess}/>
+           
+          { this.state.menus.map(menu=>{
+            console.log("link>>"+JSON.stringify(menu))
+          menu.menus.map(link=>{
+          //console.log("link>>"+JSON.stringify(link))
+         return <MenuItem link={link}/>
+          })
+        })}
+        
         </Switch>
            </div>
             </div>

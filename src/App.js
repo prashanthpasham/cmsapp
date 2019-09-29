@@ -11,15 +11,20 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
       : <Redirect to='/login' />
   )} />
   );
-
+  const PrivateRoute2 = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={(props) => (
+        <Component {...props} />
+         
+      )} />
+      );
 const routes=(
   <Switch>
    <Route exact path="/" component={Login}/>
    <Route path="/login" component={Login}/>
  
-   <PrivateRoute path="/dashboard" component={Template} >
+   <PrivateRoute2 path="/dashboard" component={Template} >
     
-     </PrivateRoute>
+     </PrivateRoute2>
     
    </Switch>
 );
