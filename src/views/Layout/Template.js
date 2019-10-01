@@ -8,7 +8,7 @@ import 'primeflex/primeflex.css';
 const items=[{
   label:'CMS App',
   icon:''}];
-  const MenuItem = ({ link:match }) => (
+  const MenuItem = ({match }) => (
     // here's a nested div
     <div>
       {/* here's a nested Route,
@@ -49,12 +49,17 @@ export default class Template extends React.Component {
           <div className="p-col-12 p-md-6 p-lg-3">
          <div id="layout-sidebar">
           
-           { this.state.menus.map(menu=>{
-           // console.log("link>>"+JSON.stringify(menu))
-          menu.menus.map(link=>{
-         // console.log("LINK>>"+JSON.stringify(link))
-       return <Link to={link.path} style={{padding:'15px'}}>{link.menutitle}</Link>
-          })
+           { this.state.menus.map((menu,index)=>{
+      
+		   return (<div>
+		    { menu.menus.map((menu1,index)=>{
+      
+		   return (<div>
+		   <Link to={menu1.path}> {menu1.menutitle}</Link>
+		    </div>)
+        })}
+
+		    </div>)
         })}
 
          </div>
@@ -63,12 +68,17 @@ export default class Template extends React.Component {
       
           <Switch>
            
-          { this.state.menus.map(menu=>{
-            console.log("link>>"+JSON.stringify(menu))
-          menu.menus.map(link=>{
-          //console.log("link>>"+JSON.stringify(link))
-         return <MenuItem link={link}/>
-          })
+          { this.state.menus.map((menu,index)=>{
+      
+		   return (<div>
+		    { menu.menus.map((menu1,index)=>{
+      
+		   return (<div>
+		  <MenuItem match={menu1}/>
+		    </div>)
+        })}
+
+		    </div>)
         })}
         
         </Switch>
