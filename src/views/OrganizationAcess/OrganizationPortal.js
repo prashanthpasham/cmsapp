@@ -1,5 +1,5 @@
 import React from 'react';
-export default class OrganizationAccess extends React.Component{
+export default class OrganizationPortal extends React.Component{
 constructor(){
     super();
   
