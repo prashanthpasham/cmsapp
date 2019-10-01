@@ -6,23 +6,18 @@ import LoginService from './services/LoginService';
 import OrganizationAccess from './views/OrganizationAcess/OrganizationPortal';
 const PrivateRoute = ({ component: Component, ...rest }) => (
 <Route {...rest} render={(props) => (
-   LoginService.isAuthenticated === true
+   LoginService.isLoggedIn() === true
       ? <Component {...props} />
       : <Redirect to='/login' />
   )} />
   );
-  const PrivateRoute2 = ({ component: Component, ...rest }) => (
-    <Route {...rest} render={(props) => (
-        <Component {...props} />
-         
-      )} />
-      );
+  
 const routes=(
   <Switch>
    <Route exact path="/" component={Login}/>
    <Route path="/login" component={Login}/>
  
-   <PrivateRoute2 path="/dashboard" component={Template} >
+   <PrivateRoute path="/dashboard" component={Template} >
     
      </PrivateRoute2>
     
