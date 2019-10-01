@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 var server="http://localhost:8084/";
-var isAuthenticated=false;
+//var isAuthenticated=false;
 const routeTable=[{
   "name":"Portal Access",
   "path":"/dashboard/access-portal",
@@ -19,9 +19,9 @@ const LoginService = {
     //isAuthenticated: true,
     isLoggedIn(){
       if(localStorage.getItem("username")===undefined){
-        isAuthenticated=false;
+        return false;
       }else
-      isAuthenticated=true;
+      return true;
     },
     postService(link,data){
       return axios({
@@ -56,7 +56,7 @@ const LoginService = {
      
     },
     signout(username) {
-      this.isAuthenticated = false;
+     // this.isAuthenticated = false;
       localStorage.removeItem("username");
       localStorage.removeItem("token")
     },
