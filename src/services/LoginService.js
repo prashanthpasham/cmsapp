@@ -40,16 +40,10 @@ const LoginService = {
     })
     },
     getService(link,token){
-      return  axios({
-        url:server+link,
-        method:'get',
-        headers: {
-          'Authorization': "Bearer "+token
-       }
-      }) .then(function (response) {
-        //handle success
-       return response.data;
-    })
+      return axios.get(server+link, {
+    headers:{"Authorization" : `Bearer ${token}`}
+  })
+    .then(response => {return response.data})
     .catch(function (response) {
         //handle error
         console.log(response);
