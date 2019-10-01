@@ -68,19 +68,8 @@ export default class Template extends React.Component {
       
           <Switch>
            
-          { this.state.menus.map((menu,index)=>{
-      
-		   return (<div>
-		    { menu.menus.map((menu1,index)=>{
-      
-		   return (<div>
-		  <MenuItem match={menu1}/>
-		    </div>)
-        })}
-
-		    </div>)
-        })}
-        
+         
+       <Route path="/dashboard/management-info" component={OrganizationPortal}/>
         </Switch>
            </div>
             </div>
