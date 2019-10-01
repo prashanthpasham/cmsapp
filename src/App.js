@@ -19,7 +19,7 @@ const routes=(
  
    <PrivateRoute path="/dashboard" component={Template} >
     
-     </PrivateRoute2>
+     </PrivateRoute>
     
    </Switch>
 );
