@@ -2,21 +2,29 @@ import React from 'react';
 import {Menubar} from 'primereact/menubar';
 import {Button} from 'primereact/button';
 import './Template.css';
-import {Link,Switch,Route} from 'react-router-dom';
-import OrganizationAccess from '../OrganizationAcess/OrganizationPortal';
+import {BrowserRouter as Router,Link,Switch,Route,Redirect} from 'react-router-dom';
+import OrganizationPortal from '../OrganizationAcess/OrganizationPortal';
 import 'primeflex/primeflex.css';
+import LoginService from '../../services/LoginService';
 const items=[{
   label:'CMS App',
   icon:''}];
-  const MenuItem = ({match }) => (
+  const PrivateRoute = ({ component: Component, ...rest }) => (
+ 
+    <Route {...rest} render={(props) => (
+    //  alert(LoginService.isLoggedIn()),
+       LoginService.isLoggedIn() === true
+          ? <Component {...props} />
+          : <Redirect to='/login' />
+      )} />
+      );
+  const MenuItem = ({ link }) => (
     // here's a nested div
-    <div>
-      {/* here's a nested Route,
-          match.url helps us make a relative path */}
-      <Route path={match.path} component={match.component} />
-    </div>
-  )
-  
+          
+      <Route path={link.path} component={link.component} >  </Route>
+    
+  );
+ 
 export default class Template extends React.Component {
   constructor(props) {
     super(props);
@@ -30,6 +38,10 @@ export default class Template extends React.Component {
     this.setState({menus:JSON.parse(localStorage.getItem("menus"))});
   
   }
+  signout(){
+    LoginService.signout();
+    window.location.href='.#/login';
+  }
   render() {
    
     return (
@@ -40,7 +52,8 @@ export default class Template extends React.Component {
         
           <Menubar model={items} style={{backgroundColor:'#1976d2',color:'white'}}>
            
-            <Button  label="Logout" icon="pi pi-power-off" style={{ marginLeft: 4 }}  className="p-button-danger"/>
+            <Button  label="Logout" icon="pi pi-power-off" style={{ marginLeft: 4 }}  className="p-button-danger"
+            onClick={this.signout}/>
           </Menubar>
           </div>
           </div>
@@ -49,12 +62,16 @@ export default class Template extends React.Component {
           <div className="p-col-12 p-md-6 p-lg-3">
          <div id="layout-sidebar">
           
+		  
+		 
+					  
+		  
            { this.state.menus.map((menu,index)=>{
       
-		   return (<div>
-		    { menu.menus.map((menu1,index)=>{
+		   return (<div key={index}>
+		    { menu.menus.map((menu1,index1)=>{
       
-		   return (<div>
+		   return (<div key={index1}>
 		   <Link to={menu1.path}> {menu1.menutitle}</Link>
 		    </div>)
         })}
@@ -66,11 +83,9 @@ export default class Template extends React.Component {
           </div>
           <div className="p-col-12 p-md-6 p-lg-9">
       
-          <Switch>
-           
-         
-       <Route path="/dashboard/management-info" component={OrganizationPortal}/>
-        </Switch>
+          <switch>
+          <Route path="/dashboard/management-info" component={OrganizationPortal}/>
+          </switch>
            </div>
             </div>
            </div>
