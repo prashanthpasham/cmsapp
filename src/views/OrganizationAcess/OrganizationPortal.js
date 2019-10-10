@@ -4,6 +4,7 @@ import {Dialog} from 'primereact/dialog';
 import {Button} from 'primereact/button';
 import {InputText} from 'primereact/inputtext';
 import {Growl} from 'primereact/growl';
+import LoginService from '../../services/LoginService'; 
 export default class OrganizationPortal extends React.Component{
 constructor(){
     super();
@@ -166,6 +167,16 @@ addDialog(){
 editDialog(){
     this.setState({isAdd:false,isEdit:true});
 }
+saveNode(){
+	if(this.state.data.length==0){
+		  this.showError("Organization Structure Required!");
+	}else{
+		var data={};
+		data.hierarchy=this.state.data;
+		data.ownerid=1;
+		LoginService.saveOrgChart(data).then(res=>alert(res));
+	}
+}
 render(){
     return(
         <div>
@@ -180,8 +191,9 @@ render(){
                 
                    {this.state.data.length==0?
                    <Button style={{float:'left'}} label="Add Organization" onClick={()=>{this.firstNode()}}/>
-                   : <OrganizationChart value={this.state.data} nodeTemplate={this.nodeTemplate} selection={this.state.selection} selectionMode="multiple"
-                        onSelectionChange={event => this.onSelect(event.data)} ></OrganizationChart>
+                   : <div> <Button style={{float:'right'}} label="save" onClick={()=>{this.saveNode()}}/>
+				    <OrganizationChart value={this.state.data} nodeTemplate={this.nodeTemplate} selection={this.state.selection} selectionMode="multiple"
+                        onSelectionChange={event => this.onSelect(event.data)} ></OrganizationChart></div>
 
     }
                 </div>
