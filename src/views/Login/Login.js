@@ -41,9 +41,9 @@ export default class Login extends React.Component {
      // alert("res>>"+res);
       if(Object.keys(data).length>0){
         if(data.error!=undefined && (data.error ||   data.error.length>0)){
-            if(data.error==="Invalid Credentails"){
+           
               alert(data.error); 
-            }
+            
         }else{
           //alert("token>>"+res);
           localStorage.setItem("username",data.username);
