@@ -41,44 +41,6 @@ const LoginService = {
         console.log(response);
     })
     },
-	fetchGet(link,token){
-		const myHeaders = new Headers();
-
-//myHeaders.append('Content-Type', 'application/json');
-myHeaders.append('token', 'Bearer '+token);
-
-		return fetch(server+link, {
-    method: 'GET',
-    headers: myHeaders,
-	mode:'no-cors'
-  }).then(function (response) {
-        //handle error
-        console.log(response);
-		  return response.json();
-    }).catch(function (response) {
-        //handle error
-        console.log(response);
-    })
-	},
-    getService(link,token){
-		//console.log('Bearer '+token);
-
-      return  axios({
-        url:server+link,
-        method:'get',
-        headers: {
-          'Authorization': 'Bearer '+token,
-		  "Access-Control-Allow-Origin":"*"
-       }
-      }) .then(function (response) {
-        //handle success
-       return response.data;
-    })
-    .catch(function (response) {
-        //handle error
-        console.log(response);
-    })
-    },
     authenticate(loginJson) {
       //this.isAuthenticated = true
       //alert("loginJson>"+loginJson);
@@ -101,6 +63,23 @@ myHeaders.append('token', 'Bearer '+token);
     .catch((error) => {
       console.error(error);
     });
+},
+postServer(link,token,data) {
+
+  return axios({
+        url:server+link,
+        method:'post',
+        data:JSON.stringify(data),
+         headers: {'Content-Type': 'application/json',"Authorization" : `Bearer ${token}` }
+       // config: { headers: {'Content-Type': 'application/json' }}
+       }) .then(function (response) {
+        //handle success
+       return response.data;
+    })
+    .catch(function (response) {
+        //handle error
+        console.log(response);
+    })
 },
     menusService(){
      
@@ -141,7 +120,13 @@ myHeaders.append('token', 'Bearer '+token);
           });
         }
       }
-    }
+    },
+	saveOrgChart(data){
+		return this.postServer("login/add-orgstructure",localStorage.getItem("token"),data).
+		then(res=>{
+			return res;
+		})
+	}
   }
   
 export default LoginService;
