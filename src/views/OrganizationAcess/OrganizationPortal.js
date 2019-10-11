@@ -69,6 +69,18 @@ constructor(){
     this.showError=this.showError.bind(this);
     
 }
+componentDidMount(){
+	LoginService.orgChartList(1).then(res=>{
+	if(res!=undefined){
+		console.log("hierarchy>>"+res.hierarchy);
+		if(Object.keys(res.hierarchy).length>0){
+		var hierarchy=[];
+		hierarchy.push(res.hierarchy);
+		this.setState({data:hierarchy});
+		}
+	}
+	})
+}
 
 async onSelect(data){
     this.setState({visible:true,isAdd:false,isEdit:false})
@@ -174,7 +186,13 @@ saveNode(){
 		var data={};
 		data.hierarchy=this.state.data;
 		data.ownerid=1;
-		LoginService.saveOrgChart(data).then(res=>alert(res));
+		console.log("node>>"+JSON.stringify(data));
+		LoginService.saveOrgChart(data).then(res=>{
+			if(res.result==="success")
+			 this.showSuccess("Saved Successfully!");
+           else
+	         this.showError("Some Went Wrong,Please try again!");
+			});
 	}
 }
 render(){
@@ -191,7 +209,7 @@ render(){
                 
                    {this.state.data.length==0?
                    <Button style={{float:'left'}} label="Add Organization" onClick={()=>{this.firstNode()}}/>
-                   : <div> <Button style={{float:'right'}} label="save" onClick={()=>{this.saveNode()}}/>
+                   : <div> <Button style={{float:'right',padding:'5px',marginRight:'15%',marginTop:'-20px',fontSize:'15px'}} label="Save" className="p-button-success" onClick={()=>{this.saveNode()}}/><br/>
 				    <OrganizationChart value={this.state.data} nodeTemplate={this.nodeTemplate} selection={this.state.selection} selectionMode="multiple"
                         onSelectionChange={event => this.onSelect(event.data)} ></OrganizationChart></div>
 
