@@ -12,6 +12,7 @@ import Template from '../Layout/Template';
 import {Route,Switch,Redirect} from 'react-router-dom';
 import LoginService from '../../services/LoginService'; 
 import OrganizationAccess from '../OrganizationAcess/OrganizationPortal';
+import {Growl} from 'primereact/growl';
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -37,13 +38,13 @@ export default class Login extends React.Component {
   }
   validateLogin(){
     LoginService.authenticate({'username':this.state.username,'password':this.state.password}).then(data=>{
-      //var res=JSON.stringify(data);
-     // alert("res>>"+res);
+      var res=JSON.stringify(data);
+     //alert("res>>"+res);
       if(Object.keys(data).length>0){
         if(data.error!=undefined && (data.error ||   data.error.length>0)){
+            this.setState({password:""});
+              this.showError(data.error); 
            
-              alert(data.error); 
-            
         }else{
           //alert("token>>"+res);
           localStorage.setItem("username",data.username);
@@ -61,12 +62,15 @@ export default class Login extends React.Component {
      
     
   }
+  showError(msg) {
+    this.growl.show({severity: 'error', summary: 'Error', detail: msg});
+}
   render() {
     return (
       <div className="App">
         <header className="App-header">
           <div className="p-grid">
-            
+            <Growl ref={(el) => this.growl = el} />
             <div className="p-col-12 p-md-12 p-lg-12">
               <Card title="CMS Login" >
                 <span className="p-float-label">
