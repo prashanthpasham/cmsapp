@@ -89,7 +89,7 @@ postServer(link,token,data) {
           return this.getAllClients("login/menus-user?username="+localStorage.getItem("username"),localStorage.getItem("token"))
           .then(data=>{
 			   var finalMenus=[];
-            alert(JSON.stringify(data));
+            //alert(JSON.stringify(data));
 			if(data!=undefined){
             var map = new Map();
             routeTable.forEach(link=>{
@@ -114,7 +114,7 @@ postServer(link,token,data) {
               obj.menus=array;
               finalMenus.push(obj);
             });
-            alert("finalMenus>>"+JSON.stringify(finalMenus));
+            //alert("finalMenus>>"+JSON.stringify(finalMenus));
 			}
             return finalMenus;
           });
@@ -123,6 +123,12 @@ postServer(link,token,data) {
     },
 	saveOrgChart(data){
 		return this.postServer("login/add-orgstructure",localStorage.getItem("token"),data).
+		then(res=>{
+			return res;
+		})
+	},
+	orgChartList(ownerId){
+		return this.getAllClients("login/org-structure/"+ownerId,localStorage.getItem("token")).
 		then(res=>{
 			return res;
 		})
