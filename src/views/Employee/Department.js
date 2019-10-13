@@ -17,7 +17,8 @@ export default class Department extends Component
              deptName:"",
              deptId:0,
              displayDialog:false,
-             newDept:true,
+             newDept:true
+            
         };
         this.saveDept= this.saveDept.bind(this);
         this.departmentList=this.departmentList.bind(this);
@@ -77,7 +78,7 @@ export default class Department extends Component
         visible:true,
         department: Object.assign({}, e.data)
     });
-   // alert(JSON.stringify(this.state.department));
+    //alert(JSON.stringify(this.state.selectedDept));
     this.setState({deptName:this.state.department.deptName
     ,deptCode:this.state.department.deptCode,deptId:this.state.department.deptId});
     }
@@ -88,7 +89,7 @@ export default class Department extends Component
          if(res!=undefined && res.result!=undefined){
           if(res.result==="success"){
               this.showSuccess("Deleted Successfully!");
-              this.setState({visible:false});
+              this.setState({deptCode:"",deptName:"",visible:false,deptId:0});
             this.departmentList();
           }else{
             this.showError("Failed to delete department!");
