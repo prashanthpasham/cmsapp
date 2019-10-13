@@ -13,7 +13,15 @@ const routeTable=[{
 },{
   "name":"Employee",
   "path":"/dashboard/employee-list",
-  "component":"EmployeeList"
+  "component":"Employee"
+},{
+  "name":"Organization",
+  "path":"/dashboard/org-chart",
+  "component":"OrganizationPortal"
+},{
+  "name":"Department",
+  "path":"/dashboard/department",
+  "component":"Department"
 }];
 const LoginService = {
   //  isAuthenticated: false,
@@ -30,7 +38,7 @@ const LoginService = {
         url:server+link,
         method:'post',
         data:JSON.stringify(data),
-         headers: {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*' }
+         headers: {'Content-Type': 'application/json' }
        // config: { headers: {'Content-Type': 'application/json' }}
        }) .then(function (response) {
         //handle success
@@ -65,7 +73,7 @@ const LoginService = {
     });
 },
 postServer(link,token,data) {
-
+console.log("token>"+`Bearer ${token}`);
   return axios({
         url:server+link,
         method:'post',
@@ -96,7 +104,7 @@ postServer(link,token,data) {
                map.set(link.name,link);
             });
             console.log(map);
-           
+           console.log("links>>"+JSON.stringify(data.links));
             data.links.forEach(element => {
               var obj={};
               obj.name=element.menutitle;
@@ -132,7 +140,13 @@ postServer(link,token,data) {
 		then(res=>{
 			return res;
 		})
-	}
+  },
+  designations(ownerId){
+		return this.getAllClients("login/designation/"+ownerId,localStorage.getItem("token")).
+		then(res=>{
+			return res;
+		})
+  }
   }
   
 export default LoginService;

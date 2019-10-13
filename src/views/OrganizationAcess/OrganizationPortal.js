@@ -146,7 +146,7 @@ addHierarchy(){
 }
 addToOrganization(node,data){
     console.log("id>>"+node.id+"@"+data);
-    if(node.id===this.state.selectedNode && (data==undefined || data.length==0)){
+    if(node.id===this.state.selectedNode && (data===undefined || data.length===0)){
         if(this.state.isAdd){
         var obj=this.hierarchy();
             obj.id=node.id+"1.";
@@ -180,7 +180,7 @@ editDialog(){
     this.setState({isAdd:false,isEdit:true});
 }
 saveNode(){
-	if(this.state.data.length==0){
+	if(this.state.data.length===0){
 		  this.showError("Organization Structure Required!");
 	}else{
 		var data={};
@@ -188,10 +188,11 @@ saveNode(){
 		data.ownerid=1;
 		console.log("node>>"+JSON.stringify(data));
 		LoginService.saveOrgChart(data).then(res=>{
-			if(res.result==="success")
+           
+			if(res!==undefined && res.result!==undefined && res.result==="success")
 			 this.showSuccess("Saved Successfully!");
            else
-	         this.showError("Some Went Wrong,Please try again!");
+	         this.showError("Some thing went Wrong,please try later!");
 			});
 	}
 }
@@ -207,7 +208,7 @@ render(){
 
                 <div className="content-section implementation organizationchart-demo">
                 
-                   {this.state.data.length==0?
+                   {this.state.data.length===0?
                    <Button style={{float:'left'}} label="Add Organization" onClick={()=>{this.firstNode()}}/>
                    : <div> <Button style={{float:'right',padding:'5px',marginRight:'15%',marginTop:'-20px',fontSize:'15px'}} label="Save" className="p-button-success" onClick={()=>{this.saveNode()}}/><br/>
 				    <OrganizationChart value={this.state.data} nodeTemplate={this.nodeTemplate} selection={this.state.selection} selectionMode="multiple"
@@ -217,7 +218,7 @@ render(){
                 </div>
                 <Dialog header="Organization Structure" visible={this.state.visible} style={{width: '50vw'}} modal={true} onHide={() => this.setState({visible: false})}>
                 <Button label="Add"  style={{marginLeft:'20px',width:'100px',padding:'5px'}} onClick={()=>{this.addDialog()}}/>
-                <Button label="Edit" style={{display:`${this.state.data.length==0?'none':'block'}`,marginTop:'-45px',marginLeft:'180px',width:'100px',padding:'5px'}}
+                <Button label="Edit" style={{display:`${this.state.data.length===0?'none':'block'}`,marginTop:'-45px',marginLeft:'180px',width:'100px',padding:'5px'}}
                 className="p-button-danger"  onClick={()=>{this.editDialog()}}/>
                 <fieldset style={{display:`${this.state.isAdd?'block':'none'}`}}>
                    <legend>Add</legend>
