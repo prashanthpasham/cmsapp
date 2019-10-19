@@ -9,6 +9,7 @@ import {InputTextarea} from 'primereact/inputtextarea';
 import {Growl} from 'primereact/growl';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
+import {FileUpload} from 'primereact/fileupload';
 export default class Employee extends Component
 {
     constructor(){
@@ -16,8 +17,8 @@ export default class Employee extends Component
          this.state={
              designation:[],
              deptList:[],
-             seldesignation:"",
-             seldepartment:"",
+             seldesignation:{},
+             seldepartment:{},
              employeeCode:"",
              employeeName:"",
              joinedDate:"",
@@ -38,9 +39,9 @@ export default class Employee extends Component
          this.onDepartment=this.onDepartment.bind(this);
          this.updateWorkData=this.updateWorkData.bind(this);
          this.addExperience=this.addExperience.bind(this);
-         this.onWorkSelect=this.onWorkSelect.bind(this);
          this.deleteBtn=this.deleteBtn.bind(this);
          this.deleteWork=this.deleteWork.bind(this);
+         this.myUploader=this.myUploader.bind(this);
     }
 componentDidMount(){
     this.orgChart();
@@ -70,7 +71,31 @@ departmentList(){
     })
 }
 addEmployee(){
-    alert(JSON.stringify(this.state.seldesignation.label));
+    //alert(JSON.stringify(this.state.seldesignation));
+    //alert(this.state.photo);
+    if(this.state.employeeCode!=undefined && this.state.employeeCode.trim().length>0)
+    {
+        if(this.state.employeeName!=undefined && this.state.employeeName.trim().length>0)
+        {
+        if(Object.keys(this.state.seldesignation).length>0)
+          {
+            if(Object.keys(this.state.seldepartment).length>0)
+            {
+              
+          }else{
+              this.showError("Department Required!");
+          } 
+        }else{
+            this.showError("Designation Required!");
+        } 
+            
+        }else{
+            this.showError("Employee Name Required!");
+        }
+        
+    }else{
+        this.showError("Employee Code Required!");
+    }
 }
  onDesignation(e){
   this.setState({seldesignation: e.value});
@@ -99,11 +124,11 @@ onDepartment(e){
             this.showError("Institute Required!");
         }else if(this.state.workDetails.startYear==undefined
             || this.state.workDetails.startYear.trim().length==0){
-                this.showError("Start Year Required!");
+                this.showError("Joined Date Required!");
             }
             else if(this.state.workDetails.endYear==undefined
                 || this.state.workDetails.endYear.trim().length==0){
-                    this.showError("End Year Required!");
+                    this.showError("Terminated Date Required!");
                 }else{
                    var array= this.state.workExperience;
                    array.push(this.state.workDetails);
@@ -117,10 +142,7 @@ onDepartment(e){
                    this.showSuccess("Work Experience Added Successfully!");
                 }
   }
-   onWorkSelect(e){
-   //await this.setState({selectedRecord:e.data});
-  
-  }
+ 
   deleteBtn(){
     return <Button className="p-button-danger" label="Delete" onClick={()=>setTimeout(()=>{this.deleteWork()},1000)}/>;
   }
@@ -137,6 +159,15 @@ onDepartment(e){
      }
      //alert(array.length);
      this.setState({workExperience:array}); 
+  }
+  myUploader(input) {
+    if (input.target.files && input.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload=(e) =>{
+        this.setState({photo:e.target.result});
+        }
+        reader.readAsDataURL(input.target.files[0]);
+      }
   }
 render(){
     
@@ -156,6 +187,7 @@ render(){
         <label>Employee Name *</label>
         <InputText value={this.state.employeeName} onChange={(e) => this.setState({employeeName: e.target.value})} />
         </div>
+        
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Designation *</label>
         <Dropdown value={this.state.seldesignation} options={this.state.designation} onChange={this.onDesignation } filter={true} filterPlaceholder="Search Designation" filterBy="label" optionLabel="label" placeholder="Designation"/>
@@ -168,6 +200,11 @@ render(){
         <label>Joining Date </label>
         <Calendar maxDate={this.state.currentDate} dateFormat="dd/mm/yy" value={this.state.joinedDate} onChange={(e) => this.setState({joinedDate: e.value})}></Calendar>
         </div>
+        <div className="p-col-12 p-md-6 p-lg-4">
+           
+           <img width="200px" src={this.state.photo}  id="pic"  height="100px" ></img>
+           <input  type="file" onChange={(e)=>this.myUploader(e)}/>
+        </div>
        </div>
        <Accordion   multiple={true} style={{width:'80%',marginTop:'20px'}}>
        <AccordionTab header="Work Experience" id="1">
@@ -175,8 +212,8 @@ render(){
                                selectionMode="single" selection={this.state.selectedRecord} onSelectionChange={e => this.setState({selectedRecord: e.value})}
                                onRowSelect={this.onWorkSelect}>
                         <Column field="institute" header="Institute" sortable={true} />
-                        <Column field="startYear" header="Start Year" sortable={true} />
-                        <Column field="endYear" header="End Year" sortable={true} />
+                        <Column field="startYear" header="Joined Date" sortable={true} />
+                        <Column field="endYear" header="Terminated Date" sortable={true} />
                         <Column header="Action" body={this.deleteBtn}/>
                     </DataTable>
            <fieldset >
