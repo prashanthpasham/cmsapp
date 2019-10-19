@@ -9,7 +9,7 @@ import {InputTextarea} from 'primereact/inputtextarea';
 import {Growl} from 'primereact/growl';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
-import {FileUpload} from 'primereact/fileupload';
+//import {FileUpload} from 'primereact/fileupload';
 export default class Employee extends Component
 {
     constructor(){
@@ -19,9 +19,15 @@ export default class Employee extends Component
              deptList:[],
              seldesignation:{},
              seldepartment:{},
-             employeeCode:"",
-             employeeName:"",
-             joinedDate:"",
+             employee:{
+                employeeCode:"",
+                employeeName:"",
+                joinedDate:"",
+                designationId:0,
+                deptId:0,
+                photo:"",
+             },
+             
              workDetails:{
                  institute:"",
                  startYear:"",
@@ -42,6 +48,7 @@ export default class Employee extends Component
          this.deleteBtn=this.deleteBtn.bind(this);
          this.deleteWork=this.deleteWork.bind(this);
          this.myUploader=this.myUploader.bind(this);
+         this.employee=this.employee.bind(this);
     }
 componentDidMount(){
     this.orgChart();
@@ -73,15 +80,19 @@ departmentList(){
 addEmployee(){
     //alert(JSON.stringify(this.state.seldesignation));
     //alert(this.state.photo);
-    if(this.state.employeeCode!=undefined && this.state.employeeCode.trim().length>0)
+    if(this.state.employee.employeeCode!=undefined && this.state.employee.employeeCode.trim().length>0)
     {
-        if(this.state.employeeName!=undefined && this.state.employeeName.trim().length>0)
+        if(this.state.employee.employeeName!=undefined && this.state.employee.employeeName.trim().length>0)
         {
         if(Object.keys(this.state.seldesignation).length>0)
           {
             if(Object.keys(this.state.seldepartment).length>0)
             {
-              
+              var employee=Object.assign({},this.state.employee);
+              employee.deptId=this.state.seldepartment.deptId;
+              employee.designationId=this.state.seldesignation.id;
+              employee['experienceDetails']=this.state.workExperience;
+             
           }else{
               this.showError("Department Required!");
           } 
@@ -164,10 +175,17 @@ onDepartment(e){
     if (input.target.files && input.target.files[0]) {
         var reader = new FileReader();
         reader.onload=(e) =>{
-        this.setState({photo:e.target.result});
+        //this.setState({photo:e.target.result});
+        this.employee(e.target.result,'photo');
         }
         reader.readAsDataURL(input.target.files[0]);
       }
+  }
+  async employee(e,type){
+    var emp=Object.assign({},this.state.employee);
+    emp[type]=e;
+    await this.setState({employee: emp});
+   // alert(JSON.stringify(this.state.employee));
   }
 render(){
     
@@ -181,11 +199,11 @@ render(){
         <br/>
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Employee Code *</label>
-        <InputText value={this.state.employeeCode} onChange={(e) => this.setState({employeeCode: e.target.value})} />
+        <InputText value={this.state.employee.employeeCode} onChange={(e) => this.employee(e.target.value,'employeeCode')} />
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Employee Name *</label>
-        <InputText value={this.state.employeeName} onChange={(e) => this.setState({employeeName: e.target.value})} />
+        <InputText value={this.state.employee.employeeName} onChange={(e) => this.employee(e.target.value,'employeeName')} />
         </div>
         
         <div className="p-col-12 p-md-6 p-lg-4">
@@ -198,11 +216,11 @@ render(){
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Joining Date </label>
-        <Calendar readOnlyInput="true" maxDate={this.state.currentDate} dateFormat="dd/mm/yy" value={this.state.joinedDate} onChange={(e) => this.setState({joinedDate: e.value})}></Calendar>
+        <Calendar readOnlyInput="true" maxDate={this.state.currentDate} dateFormat="dd/mm/yy" value={this.state.employee.joinedDate} onChange={(e) => this.employee(e.target.value,'joinedDate')}></Calendar>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
            
-           <img width="200px" src={this.state.photo}  id="pic"  height="100px" ></img>
+           <img width="200px" src={this.state.employee.photo}  id="pic"  height="100px" ></img>
            <input  type="file" onChange={(e)=>this.myUploader(e)}/>
         </div>
        </div>
