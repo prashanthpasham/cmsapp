@@ -198,7 +198,7 @@ render(){
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Joining Date </label>
-        <Calendar maxDate={this.state.currentDate} dateFormat="dd/mm/yy" value={this.state.joinedDate} onChange={(e) => this.setState({joinedDate: e.value})}></Calendar>
+        <Calendar readOnlyInput="true" maxDate={this.state.currentDate} dateFormat="dd/mm/yy" value={this.state.joinedDate} onChange={(e) => this.setState({joinedDate: e.value})}></Calendar>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
            
@@ -215,7 +215,7 @@ render(){
                         <Column field="startYear" header="Joined Date" sortable={true} />
                         <Column field="endYear" header="Terminated Date" sortable={true} />
                         <Column header="Action" body={this.deleteBtn}/>
-                    </DataTable>
+        </DataTable>
            <fieldset >
         <legend>Add Work Experience</legend>
         <div className="p-grid">
@@ -224,12 +224,12 @@ render(){
         <InputTextarea value={this.state.workDetails.institute} onChange={(e) => this.updateWorkData(e.target.value,'institute')} />
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
-        <label>Joined Date</label>
-        <Calendar dateFormat="dd/mm/yy" maxDate={this.state.currentDate} value={this.state.workDetails.startYear} onChange={(e) => this.updateWorkData(e.target.value,'startYear')}></Calendar>
+        <label>Joined Date</label><br/>
+        <Calendar dateFormat="dd/mm/yy" readOnlyInput="true" maxDate={this.state.currentDate} value={this.state.workDetails.startYear} onChange={(e) => this.updateWorkData(e.target.value,'startYear')}></Calendar>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
-        <label>Terminated Date </label>
-        <Calendar dateFormat="dd/mm/yy" maxDate={this.state.currentDate} value={this.state.workDetails.endYear} onChange={(e) => this.updateWorkData(e.target.value,'endYear')}></Calendar>
+        <label>Terminated Date </label><br/>
+        <Calendar readOnlyInput="true" dateFormat="dd/mm/yy" maxDate={this.state.currentDate} value={this.state.workDetails.endYear} onChange={(e) => this.updateWorkData(e.target.value,'endYear')}></Calendar>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
             <Button label="Add" className="p-button-primary" onClick={()=>this.addExperience()} />
