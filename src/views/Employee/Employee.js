@@ -9,7 +9,7 @@ import {InputTextarea} from 'primereact/inputtextarea';
 import {Growl} from 'primereact/growl';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
-//import {FileUpload} from 'primereact/fileupload';
+
 export default class Employee extends Component
 {
     constructor(){
@@ -19,6 +19,7 @@ export default class Employee extends Component
              deptList:[],
              seldesignation:{},
              seldepartment:{},
+             selStatus:{"label":"Active"},
              employee:{
                 employeeCode:"",
                 employeeName:"",
@@ -35,7 +36,8 @@ export default class Employee extends Component
              },
              workExperience:[],
              selectedRecord:"",
-             currentDate:new Date()
+             currentDate:new Date(),
+             statusList:[{"label":"Active"},{"label":"In active"},{"label":"Resigned"}]
          };
          
          this.addEmployee=this.addEmployee.bind(this);
@@ -49,6 +51,7 @@ export default class Employee extends Component
          this.deleteWork=this.deleteWork.bind(this);
          this.myUploader=this.myUploader.bind(this);
          this.employee=this.employee.bind(this);
+         this.onStatus=this.onStatus.bind(this);
     }
 componentDidMount(){
     this.orgChart();
@@ -92,7 +95,17 @@ addEmployee(){
               employee.deptId=this.state.seldepartment.deptId;
               employee.designationId=this.state.seldesignation.id;
               employee['experienceDetails']=this.state.workExperience;
-             
+              employee['status']=this.state.selStatus.label;
+              employee.ownerId="1";
+              employee.createdUserName=localStorage.getItem("username");
+               LoginService.postServer("login/add-employee",localStorage.getItem("token"),employee) 
+             .then(res=>{
+                 if(res.result==="success"){
+                     this.showSuccess("Employee Saved Successfully!");
+                 }else{
+                     this.showError("Error in Saving Employee");
+                 }
+             })
           }else{
               this.showError("Department Required!");
           } 
@@ -123,13 +136,14 @@ onDepartment(e){
     var month=dd.getMonth()+1;
     if(month<10)
         month="0"+month;
-    data[property]=dd.getDate()+"/"+month+"/"+dd.getFullYear();
+    data[property]=dd.getDate()+"-"+month+"-"+dd.getFullYear();
    }else
    data[property]=value;
   await this.setState({workDetails:data});
   //alert(JSON.stringify(this.state.workDetails));
   }
   addExperience(){
+      alert(this.state.workDetails.startYear);
       if(this.state.workDetails.institute==undefined
         || this.state.workDetails.institute.trim().length==0){
             this.showError("Institute Required!");
@@ -150,7 +164,7 @@ onDepartment(e){
                     endYear:""
                 };
                    this.setState({workDetails:obj});
-                   this.showSuccess("Work Experience Added Successfully!");
+                   //this.showSuccess("Work Experience Added Successfully!");
                 }
   }
  
@@ -187,6 +201,9 @@ onDepartment(e){
     await this.setState({employee: emp});
    // alert(JSON.stringify(this.state.employee));
   }
+  onStatus(e){
+    this.setState({selStatus:e.value});
+  }
 render(){
     
     return (<div>
@@ -205,7 +222,10 @@ render(){
         <label>Employee Name *</label>
         <InputText value={this.state.employee.employeeName} onChange={(e) => this.employee(e.target.value,'employeeName')} />
         </div>
-        
+        <div className="p-col-12 p-md-6 p-lg-4">
+        <label>Status *</label>
+        <Dropdown value={this.state.selStatus} options={this.state.statusList} onChange={this.onStatus } filter={true} filterPlaceholder="Search Status" filterBy="label" optionLabel="label" placeholder="Status"/>
+        </div>
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Designation *</label>
         <Dropdown value={this.state.seldesignation} options={this.state.designation} onChange={this.onDesignation } filter={true} filterPlaceholder="Search Designation" filterBy="label" optionLabel="label" placeholder="Designation"/>
@@ -215,8 +235,8 @@ render(){
         <Dropdown value={this.state.seldepartment} options={this.state.deptList} onChange={this.onDepartment } filter={true} filterPlaceholder="Search Department" filterBy="label" optionLabel="deptName" placeholder="Department"/>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
-        <label>Joining Date </label>
-        <Calendar readOnlyInput="true" maxDate={this.state.currentDate} dateFormat="dd/mm/yy" value={this.state.employee.joinedDate} onChange={(e) => this.employee(e.target.value,'joinedDate')}></Calendar>
+        <label>Date of Joining </label>
+        <Calendar readOnlyInput="true" maxDate={this.state.currentDate} dateFormat="dd-mm-yy" value={this.state.employee.joinedDate} onChange={(e) => this.employee(e.target.value,'joinedDate')}></Calendar>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
            
@@ -243,11 +263,11 @@ render(){
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Joined Date</label><br/>
-        <Calendar dateFormat="dd/mm/yy" readOnlyInput="true" maxDate={this.state.currentDate} value={this.state.workDetails.startYear} onChange={(e) => this.updateWorkData(e.target.value,'startYear')}></Calendar>
+        <Calendar dateFormat="dd-mm-yy" readOnlyInput="true" maxDate={this.state.currentDate} value={this.state.workDetails.startYear} onChange={(e) => this.updateWorkData(e.target.value,'startYear')}></Calendar>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Terminated Date </label><br/>
-        <Calendar readOnlyInput="true" dateFormat="dd/mm/yy" maxDate={this.state.currentDate} value={this.state.workDetails.endYear} onChange={(e) => this.updateWorkData(e.target.value,'endYear')}></Calendar>
+        <Calendar readOnlyInput="true" dateFormat="dd-mm-yy" maxDate={this.state.currentDate} value={this.state.workDetails.endYear} onChange={(e) => this.updateWorkData(e.target.value,'endYear')}></Calendar>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
             <Button label="Add" className="p-button-primary" onClick={()=>this.addExperience()} />
