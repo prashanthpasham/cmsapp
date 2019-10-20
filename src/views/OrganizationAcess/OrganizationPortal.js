@@ -16,51 +16,6 @@ constructor(){
         editVal:"",
         selectedNode:"",
         data:[],
-        data1: [
-                {
-                    label: 'CTO',
-                    id:'1.',
-                    className: 'p-person',
-                    expanded: true,
-                    children:[{
-                        label: 'Development',
-                        className: 'department-cto',
-                        expanded: true,
-                        id:'1.1.',
-                        children:[{
-                            label: 'Analysis',
-                            id:'1.1.1.',
-                            className: 'department-cto',
-                            children:[]
-                        },
-                        {
-                            label: 'Front End',
-                            id:'1.1.2.',
-                            className: 'department-cto',
-                            children:[]
-                        },
-                        {
-                            label: 'Back End',
-                            id:'1.1.3.',
-                            className: 'department-cto',
-                            children:[]
-                        }]
-                    },
-                    {
-                        label: 'QA',
-                        id:'1.2.',
-                        className: 'department-cto',
-                        children:[]
-                    },
-                    {
-                        label: 'R&D',
-                        id:'1.3.',
-                        className: 'department-cto',
-                        children:[]
-                    }]
-                }
-            ]
-        ,
         selection: []
     };
     this.addHierarchy=this.addHierarchy.bind(this);

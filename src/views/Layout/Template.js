@@ -9,6 +9,7 @@ import 'primeflex/primeflex.css';
 import LoginService from '../../services/LoginService';
 import Department from '../Employee/Department';
 import {Accordion,AccordionTab} from 'primereact/accordion';
+import EmployeeList from '../Employee/EmployeeList';
 const items=[{
   label:'CMS App',
   icon:''}];
@@ -91,8 +92,9 @@ export default class Template extends React.Component {
       
           <switch>
           <Route path="/dashboard/org-chart" component={OrganizationPortal}/>
-          <Route path="/dashboard/employee-list" component={Employee}/>
+          <Route path="/dashboard/employee-list" component={EmployeeList}/>
           <Route path="/dashboard/department" component={Department}/>
+          <Route path="/dashboard/add-employee" component={Employee}/>
           </switch>
            </div>
             </div>

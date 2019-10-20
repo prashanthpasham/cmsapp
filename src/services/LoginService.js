@@ -13,7 +13,7 @@ const routeTable=[{
 },{
   "name":"Employee",
   "path":"/dashboard/employee-list",
-  "component":"Employee"
+  "component":"EmployeeList"
 },{
   "name":"Organization",
   "path":"/dashboard/org-chart",

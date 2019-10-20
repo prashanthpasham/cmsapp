@@ -9,11 +9,13 @@ import {InputTextarea} from 'primereact/inputtextarea';
 import {Growl} from 'primereact/growl';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
+import {Link,Redirect} from 'react-router-dom';
+
 
 export default class Employee extends Component
 {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
          this.state={
              designation:[],
              deptList:[],
@@ -102,6 +104,9 @@ addEmployee(){
              .then(res=>{
                  if(res.result==="success"){
                      this.showSuccess("Employee Saved Successfully!");
+                     //return <Redirect to="/dashboard/employee-list"/>;
+                     setTimeout(()=>{  this.props.history.push("/dashboard/employee-list") }, 1000);
+                     
                  }else{
                      this.showError("Error in Saving Employee");
                  }
@@ -143,7 +148,7 @@ onDepartment(e){
   //alert(JSON.stringify(this.state.workDetails));
   }
   addExperience(){
-      alert(this.state.workDetails.startYear);
+     // alert(this.state.workDetails.startYear);
       if(this.state.workDetails.institute==undefined
         || this.state.workDetails.institute.trim().length==0){
             this.showError("Institute Required!");
@@ -210,6 +215,7 @@ render(){
         <h1>Add Employee</h1>
         <Growl ref={(el) => this.growl = el} />
         <div>
+        <Link to="/dashboard/employee-list"><Button className="p-button-danger"  label="Back" style={{padding:'5px',width:'100px',float:'right',marginRight:'35%',marginTop:'-50px'}}/></Link>
         <Button label="Save" style={{padding:'5px',marginRight:'20%',marginTop:'-50px',width:'100px',float:'right'}} className="p-button-primary" onClick={this.addEmployee}></Button>
         </div> 
         <div className="p-grid">
