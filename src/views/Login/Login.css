@@ -1,5 +1,5 @@
 .App-header {
-    background-color: #282c34;
+    background-image:url('https://s.niche.com/wp-content/uploads/2016/10/best-colleges-in-south-2000px.png');
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -7,4 +7,5 @@
     justify-content: center;
     font-size: calc(10px + 2vmin);
     color: white;
+    
   }
