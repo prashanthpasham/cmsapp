@@ -54,10 +54,34 @@ export default class Employee extends Component
          this.myUploader=this.myUploader.bind(this);
          this.employee=this.employee.bind(this);
          this.onStatus=this.onStatus.bind(this);
+         this.editEmployee=this.editEmployee.bind(this);
     }
-componentDidMount(){
-    this.orgChart();
-    this.departmentList();
+ async componentDidMount(){
+     this.orgChart();
+     
+    
+}
+editEmployee(){
+    if(localStorage.getItem("type")!=undefined && localStorage.getItem("type")==="edit")
+    {
+        var data=JSON.parse(localStorage.getItem("selectedEmp"));
+        alert( this.state.designation.length);
+         this.state.designation.forEach((des)=>{
+             console.log(JSON.stringify(des));
+             if(des.id==data.designationId)
+             {
+                 
+                 this.setState({seldesignation:des});
+             }
+         })
+         this.state.deptList.forEach((dept)=>{
+            if(dept.deptId==data.deptId)
+            {
+                 this.setState({seldepartment:dept});
+            }
+        })
+        this.setState({employee:data,workExperience:data.workExperience});
+    }
 }
 showSuccess(msg) {
     this.growl.show({severity: 'success', summary: 'Success', detail: msg});
@@ -65,25 +89,30 @@ showSuccess(msg) {
 showError(msg) {
     this.growl.show({severity: 'error', summary: 'Error', detail: msg});
 }
-orgChart(){
+ orgChart(){
     LoginService.designations(1).then(res=>{
         if(res!=undefined && res.hierarchy!=undefined){
         //alert(JSON.stringify(res));
-        this.setState({designation:res.hierarchy});
+            this.setState({designation:res.hierarchy});
+            this.departmentList();
+        
         }
     })
 }
-departmentList(){
+ departmentList(){
     LoginService.getAllClients("login/department/1",localStorage.getItem("token")).then(res=>{
       if(res!=undefined && res.department!=undefined){
-        this.setState({deptList:res.department});
+         setTimeout(()=>{
+            this.setState({deptList:res.department});
+        },2000);
+        this.editEmployee();
       }else{
         this.showError("Failed to fetch department records");
       }
     })
 }
 addEmployee(){
-    //alert(JSON.stringify(this.state.seldesignation));
+    alert(JSON.stringify(this.state.employee.joinedDate));
     //alert(this.state.photo);
     if(this.state.employee.employeeCode!=undefined && this.state.employee.employeeCode.trim().length>0)
     {
@@ -102,7 +131,7 @@ addEmployee(){
               employee.createdUserName=localStorage.getItem("username");
                LoginService.postServer("login/add-employee",localStorage.getItem("token"),employee) 
              .then(res=>{
-                 if(res.result==="success"){
+                 if(res!=undefined && res.result==="success"){
                      this.showSuccess("Employee Saved Successfully!");
                      //return <Redirect to="/dashboard/employee-list"/>;
                      setTimeout(()=>{  this.props.history.push("/dashboard/employee-list") }, 1000);
