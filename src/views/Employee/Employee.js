@@ -17,6 +17,8 @@ export default class Employee extends Component
     constructor(props){
         super(props);
          this.state={
+             operationType:"add",
+             loading:'block',
              designation:[],
              deptList:[],
              seldesignation:{},
@@ -39,7 +41,8 @@ export default class Employee extends Component
              workExperience:[],
              selectedRecord:"",
              currentDate:new Date(),
-             statusList:[{"label":"Active"},{"label":"In active"},{"label":"Resigned"}]
+             statusList:[{"label":"Active"},{"label":"In active"},{"label":"Resigned"}],
+             selectedreportingTo:{}
          };
          
          this.addEmployee=this.addEmployee.bind(this);
@@ -55,6 +58,9 @@ export default class Employee extends Component
          this.employee=this.employee.bind(this);
          this.onStatus=this.onStatus.bind(this);
          this.editEmployee=this.editEmployee.bind(this);
+         this.back=this.back.bind(this);
+         this.onReportingTo=this.onReportingTo.bind(this);
+         this.reportingEmpList=this.reportingEmpList.bind(this);
     }
  async componentDidMount(){
      this.orgChart();
@@ -64,24 +70,31 @@ export default class Employee extends Component
 editEmployee(){
     if(localStorage.getItem("type")!=undefined && localStorage.getItem("type")==="edit")
     {
+        this.setState({operationType:"edit"});
         var data=JSON.parse(localStorage.getItem("selectedEmp"));
-        alert( this.state.designation.length);
+        // alert(  localStorage.getItem("selectedEmp"));
+        //alert(data.joinedDate);
          this.state.designation.forEach((des)=>{
-             console.log(JSON.stringify(des));
+             //console.log(JSON.stringify(des));
              if(des.id==data.designationId)
              {
                  
                  this.setState({seldesignation:des});
+                 this.reportingEmpList();
              }
          })
+         setTimeout(()=>{
          this.state.deptList.forEach((dept)=>{
             if(dept.deptId==data.deptId)
             {
                  this.setState({seldepartment:dept});
             }
         })
+    },50);
         this.setState({employee:data,workExperience:data.workExperience});
+    
     }
+    this.setState({loading:'none'});
 }
 showSuccess(msg) {
     this.growl.show({severity: 'success', summary: 'Success', detail: msg});
@@ -104,7 +117,7 @@ showError(msg) {
       if(res!=undefined && res.department!=undefined){
          setTimeout(()=>{
             this.setState({deptList:res.department});
-        },2000);
+        },50);
         this.editEmployee();
       }else{
         this.showError("Failed to fetch department records");
@@ -112,7 +125,7 @@ showError(msg) {
     })
 }
 addEmployee(){
-    alert(JSON.stringify(this.state.employee.joinedDate));
+    //alert(JSON.stringify(this.state.employee.joinedDate));
     //alert(this.state.photo);
     if(this.state.employee.employeeCode!=undefined && this.state.employee.employeeCode.trim().length>0)
     {
@@ -120,29 +133,47 @@ addEmployee(){
         {
         if(Object.keys(this.state.seldesignation).length>0)
           {
+        
             if(Object.keys(this.state.seldepartment).length>0)
             {
               var employee=Object.assign({},this.state.employee);
+           //   alert(employee.employeeId);
               employee.deptId=this.state.seldepartment.deptId;
               employee.designationId=this.state.seldesignation.id;
+              alert(JSON.stringify(this.state.workExperience));
               employee['experienceDetails']=this.state.workExperience;
               employee['status']=this.state.selStatus.label;
               employee.ownerId="1";
               employee.createdUserName=localStorage.getItem("username");
+              if(Object.keys(this.state.selectedreportingTo).length>0){
+                if(this.state.selectedreportingTo.accessHr.trim().length==0)
+                employee.accessHr= this.state.selectedreportingTo.employeeId+"@";
+                else
+                employee.accessHr= this.state.selectedreportingTo.accessHr;
+                employee.reportingTo=this.state.selectedreportingTo.designationId;
+              }
+             
                LoginService.postServer("login/add-employee",localStorage.getItem("token"),employee) 
              .then(res=>{
                  if(res!=undefined && res.result==="success"){
+                    if(this.state.operationType==="add")
                      this.showSuccess("Employee Saved Successfully!");
+                     else
+                     this.showSuccess("Employee Edited Successfully!");
                      //return <Redirect to="/dashboard/employee-list"/>;
-                     setTimeout(()=>{  this.props.history.push("/dashboard/employee-list") }, 1000);
+                     setTimeout(()=>{  this.back() }, 1000);
                      
                  }else{
+                    if(this.state.operationType==="add")
                      this.showError("Error in Saving Employee");
+                     else
+                     this.showError("Error in Updating Employee");
                  }
              })
           }else{
               this.showError("Department Required!");
-          } 
+          }
+        
         }else{
             this.showError("Designation Required!");
         } 
@@ -156,8 +187,44 @@ addEmployee(){
     }
 }
  onDesignation(e){
-  this.setState({seldesignation: e.value});
 //alert(JSON.stringify(e.value));
+//this.setState({loading:'block'});
+this.setState({seldesignation:e.value});
+this.reportingEmpList();
+}
+reportingEmpList(){
+    setTimeout(()=>{
+        var emp={};
+        emp.ownerId=1;
+        emp.designation=0;
+        this.state.designation.forEach((item)=>{
+        if(item.hierarchy===this.state.seldesignation.parentNames){
+            emp.designation=item.id;
+        }
+        });
+        //emp.designation=this.state.seldesignation.id;
+        //alert(JSON.stringify(emp));
+        LoginService.postServer("login/employee-list",localStorage.getItem("token"),emp).then(
+            (res)=>{
+             if(res!=undefined && res.result==="success"){
+                 //alert(JSON.stringify(res.employees));
+               this.setState({reportingToEmps:res.employees});
+               if(localStorage.getItem("type")!=undefined && localStorage.getItem("type")==="edit"){
+               setTimeout(()=>{
+                  
+                   this.state.reportingToEmps.forEach((item)=>{
+                  // alert(this.state.employee.reportingTo);
+                       if(item.designationId===this.state.employee.reportingTo){
+                          this.setState({selectedreportingTo:item});
+                         // alert("item>>"+JSON.stringify(item));
+                       }
+                   });
+               },50);
+            }
+               //this.setState({loading:'none'});
+             }
+         });
+        },50);
 }
 onDepartment(e){
     this.setState({seldepartment: e.value});
@@ -231,21 +298,39 @@ onDepartment(e){
   }
   async employee(e,type){
     var emp=Object.assign({},this.state.employee);
+    if(type==="joinedDate"){
+        var date=new Date(e);
+        var mm=date.getMonth()+1;
+        emp[type]=(date.getDate()<10?("0"+date.getDate()):date.getDate())+"-"+(mm<10?("0"+mm):mm)+"-"+date.getFullYear();
+       // alert(emp[type]);
+    }
+    else
     emp[type]=e;
+   
     await this.setState({employee: emp});
    // alert(JSON.stringify(this.state.employee));
   }
   onStatus(e){
     this.setState({selStatus:e.value});
   }
+  onReportingTo(e){
+    this.setState({selectedreportingTo:e.value});
+  }
+  back(){
+      localStorage.removeItem("type");
+      localStorage.removeItem("selectedEmp");
+      this.props.history.push("/dashboard/employee-list");
+  }
 render(){
     
     return (<div>
-        <h1>Add Employee</h1>
+        <img src="/22.gif" style={{display:`${this.state.loading}`,margin:'20%'}}/>
+        <div style={{display:`${this.state.loading==='none'?'block':'none'}`}}>
+        <h1>{this.state.operationType==="add"?"Add Employee":"Edit Employee"}</h1>
         <Growl ref={(el) => this.growl = el} />
         <div>
-        <Link to="/dashboard/employee-list"><Button className="p-button-danger"  label="Back" style={{padding:'5px',width:'100px',float:'right',marginRight:'35%',marginTop:'-50px'}}/></Link>
-        <Button label="Save" style={{padding:'5px',marginRight:'20%',marginTop:'-50px',width:'100px',float:'right'}} className="p-button-primary" onClick={this.addEmployee}></Button>
+        <Button className="p-button-danger"  label="Back" style={{padding:'5px',width:'100px',float:'right',marginRight:'35%',marginTop:'-50px'}} onClick={()=>this.back()}/>
+        <Button label="Save" style={{padding:'5px',marginRight:'20%',marginTop:'-50px',width:'100px',float:'right'}} className="p-button-primary" onClick={()=>this.addEmployee()}></Button>
         </div> 
         <div className="p-grid">
         <br/>
@@ -266,16 +351,21 @@ render(){
         <Dropdown value={this.state.seldesignation} options={this.state.designation} onChange={this.onDesignation } filter={true} filterPlaceholder="Search Designation" filterBy="label" optionLabel="label" placeholder="Designation"/>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
+                     <label>Reporting To </label>
+                     <Dropdown value={this.state.selectedreportingTo} options={this.state.reportingToEmps} onChange={this.onReportingTo } filter={true} filterPlaceholder="Search Reporting To" filterBy="employeeName" optionLabel="employeeName" placeholder="Reporting To"/>
+         </div>
+        <div className="p-col-12 p-md-6 p-lg-4">
         <label>Department *</label>
         <Dropdown value={this.state.seldepartment} options={this.state.deptList} onChange={this.onDepartment } filter={true} filterPlaceholder="Search Department" filterBy="label" optionLabel="deptName" placeholder="Department"/>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
         <label>Date of Joining </label>
-        <Calendar readOnlyInput="true" maxDate={this.state.currentDate} dateFormat="dd-mm-yy" value={this.state.employee.joinedDate} onChange={(e) => this.employee(e.target.value,'joinedDate')}></Calendar>
+        <Calendar readOnlyInput="true" maxDate={this.state.currentDate} dateFormat="dd-mm-yy"  value={this.state.employee.joinedDate} onChange={(e) => this.employee(e.target.value,'joinedDate')}></Calendar>
         </div>
         <div className="p-col-12 p-md-6 p-lg-4">
-           
-           <img width="200px" src={this.state.employee.photo}  id="pic"  height="100px" ></img>
+        {this.state.employee.photo.length==0?
+        <img width="200px" src="/no-image.jpg"  id="pic"  height="100px" ></img>
+           :<img width="200px" src={this.state.employee.photo}  id="pic"  height="100px" ></img>}
            <input  type="file" onChange={(e)=>this.myUploader(e)}/>
         </div>
        </div>
@@ -311,6 +401,7 @@ render(){
         </fieldset>
        </AccordionTab>
            </Accordion>
+       </div>
        </div>
           );
 }
